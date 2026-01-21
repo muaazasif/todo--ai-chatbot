@@ -101,6 +101,7 @@ async def run_agent(user_id: str, messages: list):
             }
 
     elif ("show" in last_message or "list" in last_message or "display" in last_message or
+          "all my tasks" in last_message or
           ("what" in last_message and ("task" in last_message or "pending" in last_message or "complete" in last_message or "all" in last_message)) or
           ("show" in last_message and "task" in last_message) or
           ("all" in last_message and "pending" in last_message) or
@@ -126,8 +127,13 @@ async def run_agent(user_id: str, messages: list):
             }
         else:
             if result:
-                task_list = ", ".join([f"Task #{task['id']}: '{task['title']}' ({'completed' if task['completed'] else 'pending'})" for task in result])
-                response = f"Here are your {status} tasks: {task_list}"
+                task_descriptions = []
+                for task in result:
+                    status_text = 'completed' if task.get('completed', False) else 'pending'
+                    task_descriptions.append(f"- {task['title']} ({status_text})")
+
+                tasks_text = "\n".join(task_descriptions)
+                response = f"Here are your {status} tasks:\n{tasks_text}"
             else:
                 response = f"You don't have any {status} tasks."
 
