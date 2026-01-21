@@ -142,9 +142,11 @@
                     
                     const lowerInput = inputValue.toLowerCase();
                     if (lowerInput.includes('add')) {
-                        response = `I've added the task '${inputValue.replace('add ', '').replace('Add ', '')}' to your list.`;
-                    } else if (lowerInput.includes('show') || lowerInput.includes('list') || lowerInput.includes('what')) {
-                        response = "Here are your tasks:\n- Buy groceries (pending)\n- Call mom (pending)\n- Finish report (completed)";
+                        response = `I've added the task '${inputValue.replace(/add\s*/i, '')}' to your list.`;
+                    } else if (lowerInput.includes('show all') || lowerInput.includes('list all') || lowerInput.includes('what are all')) {
+                        response = "Here are all your tasks:\n- Buy groceries (pending)\n- Call mom (pending)\n- Finish report (completed)";
+                    } else if (lowerInput.includes('what') && (lowerInput.includes('pending') || lowerInput.includes('incomplete'))) {
+                        response = "Here are your pending tasks:\n- Buy groceries (pending)\n- Call mom (pending)";
                     } else if (lowerInput.includes('complete') || lowerInput.includes('done')) {
                         response = `I've marked the task as completed.`;
                     } else if (lowerInput.includes('delete') || lowerInput.includes('remove')) {
