@@ -1,33 +1,32 @@
-# Todo AI Chatbot Documentation
+# Todo AI Chatbot - Live Application
 
-Welcome to the documentation for the Todo AI Chatbot project.
+The Todo AI Chatbot is a full-stack application that cannot be hosted on GitHub Pages due to technical limitations.
 
 ## Live Application
 
-The Todo AI Chatbot is deployed and running on Railway:
+**[Access the Live Todo AI Chatbot Application](https://todo-ai-chatbot-production.up.railway.app/)**
 
-[Visit Live Application](https://todo-ai-chatbot-production.up.railway.app/)
+## Why This Application Cannot Be Hosted on GitHub Pages
 
-## About
+The Todo AI Chatbot is a full-stack application that requires:
+- Python/FastAPI backend server
+- PostgreSQL database
+- AI API integrations (OpenAI/Gemini)
+- Dynamic API endpoints
+- Authentication system
+- Real-time chat functionality
 
-Todo AI Chatbot is an innovative task management system that leverages artificial intelligence to understand natural language commands for managing your todos.
+GitHub Pages can only host static HTML/CSS/JS files and cannot run backend services.
 
-## Features
+## Application Features
 
-- Natural language processing for task management
-- AI-powered task interpretation
-- Conversational chat interface
-- Secure authentication system
-- Real-time task updates
-
-## Tech Stack
-
-- **Backend**: Python, FastAPI, SQLModel
-- **Frontend**: React, Next.js
-- **Database**: PostgreSQL
-- **AI**: OpenAI API or Google Gemini
-- **Deployment**: Railway
+- Sign up and login functionality
+- Natural language task management
+- Conversational AI interface
+- Task creation, completion, and deletion
+- Real-time updates
+- Secure authentication
 
 ## Repository
 
-The full source code is available at: [https://github.com/muaazasif/todo--ai-chatbot](https://github.com/muaazasif/todo--ai-chatbot)
+[View Source Code](https://github.com/muaazasif/todo--ai-chatbot)
