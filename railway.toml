@@ -1,7 +1,7 @@
 # Railway deployment configuration
 
 [build]
-builder = "NIXPACKS"
+builder = "nixpacks"
 
 [build.args]
 NODE_VERSION = "18.17.0"
@@ -10,7 +10,8 @@ PYTHON_VERSION = "3.11.5"
 [deploy]
 numReplicas = 1
 region = "us-central1"
-ephemeral = false
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
 
 [variables]
 OPENAI_API_KEY = { description = "OpenAI API Key for AI functionality", required = true }
