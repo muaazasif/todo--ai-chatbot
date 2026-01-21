@@ -14,7 +14,10 @@ settings = Settings()
 if settings.database_url.startswith("sqlite"):
     engine = create_engine(settings.database_url, echo=True)
 else:
-    engine = create_engine(settings.database_url, echo=True)
+    # For PostgreSQL, use connect_args to handle SSL
+    engine = create_engine(settings.database_url, echo=True, connect_args={
+        "sslmode": "require"
+    })
 
 
 # Import User model from auth module
