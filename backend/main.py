@@ -1,5 +1,7 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse, FileResponse
 import os
 from typing import Optional
 from pydantic import BaseModel
@@ -48,9 +50,48 @@ app.include_router(auth_routes_router)  # Include the new authentication routes
 app.include_router(chat_router, prefix="/api")
 app.include_router(auth_router, prefix="/auth")
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to Todo AI Chatbot API"}
+# Serve frontend files
+frontend_dir = os.path.join(os.path.dirname(__file__), "..", "frontend", "out")
+
+if os.path.exists(frontend_dir):
+    app.mount("/static", StaticFiles(directory=os.path.join(frontend_dir, "_next", "static")), name="static")
+
+    @app.get("/", response_class=HTMLResponse)
+    async def serve_frontend(request: Request):
+        frontend_file = os.path.join(frontend_dir, "index.html")
+        if os.path.exists(frontend_file):
+            with open(frontend_file, "r") as f:
+                content = f.read()
+            return HTMLResponse(content=content)
+        else:
+            return {"message": "Welcome to Todo AI Chatbot API - Frontend not built"}
+
+    @app.get("/{full_path:path}", response_class=HTMLResponse)
+    async def serve_frontend_pages(full_path: str, request: Request):
+        # Try to serve the requested file, fallback to index.html for SPA
+        requested_file = os.path.join(frontend_dir, full_path)
+
+        # If the requested file exists and is not a directory, serve it
+        if os.path.exists(requested_file) and not os.path.isdir(requested_file):
+            if requested_file.endswith('.html'):
+                with open(requested_file, "r") as f:
+                    content = f.read()
+                return HTMLResponse(content=content)
+            elif requested_file.endswith(('.js', '.css', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico')):
+                return FileResponse(requested_file)
+
+        # For SPA, serve index.html for all other routes
+        index_file = os.path.join(frontend_dir, "index.html")
+        if os.path.exists(index_file):
+            with open(index_file, "r") as f:
+                content = f.read()
+            return HTMLResponse(content=content)
+        else:
+            return {"message": "Welcome to Todo AI Chatbot API - Frontend not built"}
+else:
+    @app.get("/")
+    def read_root():
+        return {"message": "Welcome to Todo AI Chatbot API - Frontend not built"}
 
 # Health check endpoint
 @app.get("/health")
