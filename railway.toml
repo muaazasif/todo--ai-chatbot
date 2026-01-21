@@ -1,7 +1,7 @@
 # Railway deployment configuration
 
 [build]
-builder = "heroku/buildpacks:20"
+builder = "NIXPACKS"
 
 [build.args]
 NODE_VERSION = "18.17.0"
@@ -12,7 +12,7 @@ numReplicas = 1
 region = "us-central1"
 ephemeral = false
 
-[env]
+[variables]
 OPENAI_API_KEY = { description = "OpenAI API Key for AI functionality", required = true }
 DATABASE_URL = { description = "Database connection string", required = true }
 AUTH_SECRET = { description = "Secret key for authentication", required = true }
