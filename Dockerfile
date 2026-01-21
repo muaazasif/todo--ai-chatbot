@@ -53,6 +53,7 @@ COPY --from=backend /app/backend .
 COPY --from=frontend /app/frontend/public ./frontend/public
 COPY --from=frontend /app/frontend/.next ./frontend/.next
 COPY --from=frontend /app/frontend/package*.json ./frontend/
+COPY --from=frontend /app/frontend/out ./frontend/out
 
 # Expose port
 EXPOSE 8000
