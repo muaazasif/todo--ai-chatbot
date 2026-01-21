@@ -50,8 +50,14 @@ app.include_router(auth_routes_router)  # Include the new authentication routes
 app.include_router(chat_router, prefix="/api")
 app.include_router(auth_router, prefix="/auth")
 
+import os
+import logging
+
 # Serve frontend files
-frontend_dir = os.path.join(os.path.dirname(__file__), "..", "frontend", "out")
+frontend_dir = "/app/frontend/out"  # Absolute path in Docker container
+
+logging.info(f"Looking for frontend files at: {frontend_dir}")
+logging.info(f"Frontend dir exists: {os.path.exists(frontend_dir)}")
 
 if os.path.exists(frontend_dir):
     app.mount("/static", StaticFiles(directory=os.path.join(frontend_dir, "_next", "static")), name="static")
@@ -59,12 +65,14 @@ if os.path.exists(frontend_dir):
     @app.get("/", response_class=HTMLResponse)
     async def serve_frontend(request: Request):
         frontend_file = os.path.join(frontend_dir, "index.html")
+        logging.info(f"Serving index.html from: {frontend_file}")
+        logging.info(f"Index file exists: {os.path.exists(frontend_file)}")
         if os.path.exists(frontend_file):
             with open(frontend_file, "r") as f:
                 content = f.read()
             return HTMLResponse(content=content)
         else:
-            return {"message": "Welcome to Todo AI Chatbot API - Frontend not built"}
+            return {"message": "Welcome to Todo AI Chatbot API - Frontend index.html not found"}
 
     @app.get("/{full_path:path}", response_class=HTMLResponse)
     async def serve_frontend_pages(full_path: str, request: Request):
@@ -87,11 +95,11 @@ if os.path.exists(frontend_dir):
                 content = f.read()
             return HTMLResponse(content=content)
         else:
-            return {"message": "Welcome to Todo AI Chatbot API - Frontend not built"}
+            return {"message": "Welcome to Todo AI Chatbot API - Frontend index.html not found"}
 else:
     @app.get("/")
     def read_root():
-        return {"message": "Welcome to Todo AI Chatbot API - Frontend not built"}
+        return {"message": "Welcome to Todo AI Chatbot API - Frontend directory not found"}
 
 # Health check endpoint
 @app.get("/health")
