@@ -3,8 +3,8 @@ export default async function handler(req, res) {
   // Get the userId from the query parameters
   const { userId } = req.query;
 
-  // Construct the backend API URL
-  const backendUrl = `http://localhost:8000/api/${userId}/chat`;
+  // Construct the backend API URL - using Railway deployment
+  const backendUrl = `https://todo-ai-chatbot-production.up.railway.app/api/chat`;
 
   if (req.method === 'POST') {
     try {
