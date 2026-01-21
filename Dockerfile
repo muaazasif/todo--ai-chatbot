@@ -1,5 +1,18 @@
 # Production Dockerfile for Todo AI Chatbot Backend
 
+FROM node:18-alpine AS frontend-builder
+
+WORKDIR /app
+
+# Copy frontend package files and install dependencies
+COPY frontend/package*.json ./
+RUN npm ci --only=production
+
+# Copy frontend source code and build
+COPY frontend/ .
+RUN npm run build
+
+# Backend stage
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -17,6 +30,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy backend source code
 COPY backend/ .
+
+# Copy built frontend from the previous stage
+COPY --from=frontend-builder /app/out ./frontend/out
 
 # Expose port
 EXPOSE 8000
