@@ -1,22 +1,21 @@
 # Railway deployment configuration
 
+# Specify the build command
 [build]
-builder = "nixpacks"
+builder = "dockerfile"
 
-[build.args]
-NODE_VERSION = "18.17.0"
-PYTHON_VERSION = "3.11.5"
-
+# Deploy settings
 [deploy]
 numReplicas = 1
 region = "us-central1"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
 
+# Environment variables
 [variables]
 OPENAI_API_KEY = { description = "OpenAI API Key for AI functionality", required = true }
 DATABASE_URL = { description = "Database connection string", required = true }
 AUTH_SECRET = { description = "Secret key for authentication", required = true }
 SECRET_KEY = { description = "Secret key for JWT tokens", required = true }
-MCP_SERVER_HOST = { default = "localhost", description = "Host for the MCP server" }
+MCP_SERVER_HOST = { default = "0.0.0.0", description = "Host for the MCP server" }
 MCP_SERVER_PORT = { default = "3000", description = "Port for the MCP server" }
