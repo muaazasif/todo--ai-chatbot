@@ -627,7 +627,7 @@ export default function Home() {
                 <div className="p-4">
                   {(() => {
                     // Extract all tasks from messages and track changes
-                    const allTasks = {};
+                    const allTasks: { [key: string]: { id: string; title: string; status: string } } = {};
 
                     // Process all messages to track task changes
                     for (let i = 0; i < messages.length; i++) {
@@ -657,7 +657,7 @@ export default function Home() {
                         if (taskMatch) {
                           // Find the task ID by title
                           for (const id in allTasks) {
-                            if (allTasks[id].title === taskMatch[1]) {
+                            if (allTasks[id] && allTasks[id].title === taskMatch[1]) {
                               allTasks[id].status = 'completed';
                               break;
                             }
@@ -671,7 +671,7 @@ export default function Home() {
                         if (taskMatch) {
                           // Find the task ID by title and remove it
                           for (const id in allTasks) {
-                            if (allTasks[id].title === taskMatch[1]) {
+                            if (allTasks[id] && allTasks[id].title === taskMatch[1]) {
                               delete allTasks[id];
                               break;
                             }
