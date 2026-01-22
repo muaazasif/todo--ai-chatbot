@@ -32,7 +32,7 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
     with Session(engine) as session:
         if request.conversation_id is None:
             # Create new conversation
-            conversation = Conversation(user_id=user_id)
+            conversation = Conversation(user_id=str(user_id))  # Convert to string to match DB schema
             session.add(conversation)
             session.commit()
             session.refresh(conversation)
@@ -47,7 +47,7 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
 
         # Store user message
         user_message = Message(
-            user_id=user_id,
+            user_id=str(user_id),  # Convert to string to match DB schema
             conversation_id=conversation_id,
             role="user",
             content=request.message
@@ -73,7 +73,7 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
     # Store assistant response
     with Session(engine) as session:
         assistant_message = Message(
-            user_id=user_id,
+            user_id=str(user_id),  # Convert to string to match DB schema
             conversation_id=conversation_id,
             role="assistant",
             content=result["response"]
