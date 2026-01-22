@@ -27,28 +27,28 @@ class ToolResult(BaseModel):
 
 
 class AddTaskParams(BaseModel):
-    user_id: str
+    user_id: int  # Changed to int to match the actual user_id type
     title: str
     description: str = None
 
 
 class ListTasksParams(BaseModel):
-    user_id: str
+    user_id: int  # Changed to int to match the actual user_id type
     status: str = "all"  # "all", "pending", "completed"
 
 
 class CompleteTaskParams(BaseModel):
-    user_id: str
+    user_id: int  # Changed to int to match the actual user_id type
     task_id: int
 
 
 class DeleteTaskParams(BaseModel):
-    user_id: str
+    user_id: int  # Changed to int to match the actual user_id type
     task_id: int
 
 
 class UpdateTaskParams(BaseModel):
-    user_id: str
+    user_id: int  # Changed to int to match the actual user_id type
     task_id: int
     title: str = None
     description: str = None
@@ -68,12 +68,9 @@ class MCPServer:
     async def add_task(self, params: AddTaskParams) -> Dict[str, Any]:
         """Create a new task"""
         try:
-            # Convert user_id to integer if it comes as string
-            user_id_int = int(params.user_id) if isinstance(params.user_id, str) else params.user_id
-
             with Session(engine) as session:
                 task = Task(
-                    user_id=user_id_int,
+                    user_id=params.user_id,
                     title=params.title,
                     description=params.description,
                     completed=False
@@ -94,11 +91,8 @@ class MCPServer:
     async def list_tasks(self, params: ListTasksParams) -> List[Dict[str, Any]]:
         """Retrieve tasks from the list"""
         try:
-            # Convert user_id to integer if it comes as string
-            user_id_int = int(params.user_id) if isinstance(params.user_id, str) else params.user_id
-
             with Session(engine) as session:
-                statement = select(Task).where(Task.user_id == user_id_int)
+                statement = select(Task).where(Task.user_id == params.user_id)
 
                 if params.status == "pending":
                     statement = statement.where(Task.completed == False)
@@ -122,13 +116,10 @@ class MCPServer:
     async def complete_task(self, params: CompleteTaskParams) -> Dict[str, Any]:
         """Mark a task as complete"""
         try:
-            # Convert user_id to integer if it comes as string
-            user_id_int = int(params.user_id) if isinstance(params.user_id, str) else params.user_id
-
             with Session(engine) as session:
                 task = session.get(Task, params.task_id)
 
-                if not task or task.user_id != user_id_int:
+                if not task or task.user_id != params.user_id:
                     return {"error": f"Task {params.task_id} not found for user {params.user_id}"}
 
                 task.completed = True
@@ -148,13 +139,10 @@ class MCPServer:
     async def delete_task(self, params: DeleteTaskParams) -> Dict[str, Any]:
         """Remove a task from the list"""
         try:
-            # Convert user_id to integer if it comes as string
-            user_id_int = int(params.user_id) if isinstance(params.user_id, str) else params.user_id
-
             with Session(engine) as session:
                 task = session.get(Task, params.task_id)
 
-                if not task or task.user_id != user_id_int:
+                if not task or task.user_id != params.user_id:
                     return {"error": f"Task {params.task_id} not found for user {params.user_id}"}
 
                 session.delete(task)
@@ -172,13 +160,10 @@ class MCPServer:
     async def update_task(self, params: UpdateTaskParams) -> Dict[str, Any]:
         """Modify task title or description"""
         try:
-            # Convert user_id to integer if it comes as string
-            user_id_int = int(params.user_id) if isinstance(params.user_id, str) else params.user_id
-
             with Session(engine) as session:
                 task = session.get(Task, params.task_id)
 
-                if not task or task.user_id != user_id_int:
+                if not task or task.user_id != params.user_id:
                     return {"error": f"Task {params.task_id} not found for user {params.user_id}"}
 
                 if params.title is not None:
