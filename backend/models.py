@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
 # Use SQLite for local development, PostgreSQL for production
 if settings.database_url.startswith("sqlite"):
     engine = create_engine(settings.database_url, echo=True)
