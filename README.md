@@ -10,22 +10,18 @@ An AI-powered chatbot interface for managing todos through natural language.
 - Real-time chat interface
 - Task CRUD operations
 
+## Live Demo
+
+The application is deployed on GitHub Pages and connects to the Railway backend:
+- **Frontend**: https://muaazasif.github.io/todo--ai-chatbot/
+- **Backend**: https://todo-ai-chatbot-production.up.railway.app/
+
 ## Architecture
 
 This application consists of two main components:
 
-1. **Backend**: FastAPI server with SQLModel and PostgreSQL database
-2. **Frontend**: Next.js application with Tailwind CSS
-
-## Deployment
-
-### Backend (Railway)
-
-The backend is deployed on Railway and accessible at: https://todo-ai-chatbot-production.up.railway.app/
-
-### Frontend (GitHub Pages)
-
-The frontend is deployed on GitHub Pages and connects to the Railway backend.
+1. **Backend**: FastAPI server with SQLModel and PostgreSQL database (deployed on Railway)
+2. **Frontend**: Next.js application with Tailwind CSS (deployed on GitHub Pages)
 
 ## Local Development
 
@@ -64,15 +60,7 @@ npm run dev
 
 ## GitHub Pages Deployment
 
-The static build is located in the `docs` folder. To deploy to GitHub Pages:
-
-1. Push this repository to GitHub
-2. Go to your repository settings
-3. Under "Pages" section, select source as "Deploy from a branch"
-4. Select branch `main` and folder `/docs`
-5. Click Save
-
-The application will be available at `https://<your-username>.github.io/<repository-name>/`
+The static build is located in the `docs` folder. The application is already configured for GitHub Pages deployment with proper asset paths.
 
 ## How It Works
 
