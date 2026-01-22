@@ -130,7 +130,8 @@ async def run_agent(user_id: str, messages: list):
                 task_descriptions = []
                 for task in result:
                     status_text = 'completed' if task.get('completed', False) else 'pending'
-                    task_descriptions.append(f"- {task['title']} ({status_text})")
+                    # Format as expected by frontend for parsing
+                    task_descriptions.append(f"Task #{task['id']}: '{task['title']}' ({status_text})")
 
                 tasks_text = "\n".join(task_descriptions)
                 response = f"Here are your {status} tasks:\n{tasks_text}"
