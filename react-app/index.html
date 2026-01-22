@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo AI Chatbot</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .bounce {
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const App = () => {
+            const [messages, setMessages] = useState([]);
+            const [inputValue, setInputValue] = useState('');
+            const [isLoading, setIsLoading] = useState(false);
+            const [token, setToken] = useState(null);
+            const [conversationId, setConversationId] = useState(null);
+            const [showAuth, setShowAuth] = useState(true);
+            const [authForm, setAuthForm] = useState('login');
+            const [email, setEmail] = useState('');
+            const [username, setUsername] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+            const messagesEndRef = useRef(null);
+
+            // Check for existing token on load
+            useEffect(() => {
+                const savedToken = localStorage.getItem('token');
+                if (savedToken) {
+                    setToken(savedToken);
+                    setShowAuth(false);
+                }
+            }, []);
+
+            // Scroll to bottom of messages
+            useEffect(() => {
+                scrollToBottom();
+            }, [messages]);
+
+            const scrollToBottom = () => {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            };
+
+            const handleAuthSubmit = async (e) => {
+                e.preventDefault();
+                setError('');
+
+                // Simulate authentication
+                if (username && password) {
+                    // In a real app, this would be an API call
+                    const fakeToken = 'fake-jwt-token-' + Math.random().toString(36);
+                    localStorage.setItem('token', fakeToken);
+                    setToken(fakeToken);
+                    setShowAuth(false);
+                    
+                    // Add welcome message
+                    setMessages([{
+                        id: Date.now(),
+                        role: 'assistant',
+                        content: "Welcome! You can now use the Todo AI Chatbot. Try saying 'add a task to buy groceries' or 'show me my tasks'."
+                    }]);
+                } else {
+                    setError('Please enter username and password');
+                }
+            };
+
+            const handleLogout = () => {
+                localStorage.removeItem('token');
+                setToken(null);
+                setShowAuth(true);
+                setMessages([]);
+                setConversationId(null);
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                if (!inputValue.trim() || isLoading || !token) return;
+
+                // Add user message to UI immediately
+                const userMessage = {
+                    id: Date.now(),
+                    role: 'user',
+                    content: inputValue
+                };
+
+                setMessages(prev => [...prev, userMessage]);
+                setInputValue('');
+                setIsLoading(true);
+
+                // Simulate API response
+                setTimeout(() => {
+                    let response = '';
+                    
+                    const lowerInput = inputValue.toLowerCase();
+                    if (lowerInput.includes('add')) {
+                        response = `I've added the task '${inputValue.replace(/add\s*/i, '')}' to your list.`;
+                    } else if (lowerInput.includes('show all') || lowerInput.includes('list all') || lowerInput.includes('what are all')) {
+                        response = "Here are all your tasks:\n- Buy groceries (pending)\n- Call mom (pending)\n- Finish report (completed)";
+                    } else if (lowerInput.includes('what') && (lowerInput.includes('pending') || lowerInput.includes('incomplete'))) {
+                        response = "Here are your pending tasks:\n- Buy groceries (pending)\n- Call mom (pending)";
+                    } else if (lowerInput.includes('complete') || lowerInput.includes('done')) {
+                        response = `I've marked the task as completed.`;
+                    } else if (lowerInput.includes('delete') || lowerInput.includes('remove')) {
+                        response = `I've deleted the task.`;
+                    } else {
+                        response = "I understand your request. How else can I help you manage your tasks?";
+                    }
+
+                    const assistantMessage = {
+                        id: Date.now() + 1,
+                        role: 'assistant',
+                        content: response
+                    };
+
+                    setMessages(prev => [...prev, assistantMessage]);
+                    setIsLoading(false);
+                }, 1000);
+            };
+
+            return (
+                <div className="container mx-auto px-4 py-8 max-w-4xl">
+                    <header className="text-center mb-10 slide-in">
+                        <div className="flex justify-center mb-4">
+                            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-full shadow-lg">
+                                <div className="bg-white p-2 rounded-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 mb-3">
+                            Todo AI Chatbot
+                        </h1>
+                        <p className="text-gray-600 text-lg max-w-md mx-auto">
+                            Manage your tasks through natural language conversation
+                        </p>
+
+                        {token && (
+                            <div className="mt-6 flex justify-center items-center space-x-4">
+                                <span className="text-sm text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm">
+                                    Logged in
+                                </span>
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-sm bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-1.5 px-4 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        )}
+                    </header>
+
+                    {showAuth ? (
+                        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto transform transition-all duration-500 hover:shadow-2xl">
+                            <div className="flex bg-gray-100 rounded-lg p-1 mb-6">
+                                <button
+                                    className={`flex-1 py-3 font-semibold rounded-md transition-colors duration-300 ${
+                                        authForm === 'login'
+                                            ? 'bg-white text-blue-600 shadow-sm'
+                                            : 'text-gray-600 hover:text-gray-900'
+                                    }`}
+                                    onClick={() => setAuthForm('login')}
+                                >
+                                    Sign In
+                                </button>
+                                <button
+                                    className={`flex-1 py-3 font-semibold rounded-md transition-colors duration-300 ${
+                                        authForm === 'register'
+                                            ? 'bg-white text-blue-600 shadow-sm'
+                                            : 'text-gray-600 hover:text-gray-900'
+                                    }`}
+                                    onClick={() => setAuthForm('register')}
+                                >
+                                    Sign Up
+                                </button>
+                            </div>
+
+                            {error && (
+                                <div className="mb-6 p-3 bg-red-50 text-red-700 rounded-lg flex items-center animate-pulse">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    {error}
+                                </div>
+                            )}
+
+                            <form onSubmit={handleAuthSubmit} className="space-y-5">
+                                {authForm === 'register' && (
+                                    <div className="animate-fadeIn">
+                                        <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="email">
+                                            Email
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                                </svg>
+                                            </div>
+                                            <input
+                                                id="email"
+                                                type="email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                placeholder="your@email.com"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="animate-fadeIn">
+                                    <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="username">
+                                        Username
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <input
+                                            id="username"
+                                            type="text"
+                                            value={username}
+                                            onChange={(e) => setUsername(e.target.value)}
+                                            className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            placeholder="Enter your username"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="animate-fadeIn">
+                                    <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="password">
+                                        Password
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <input
+                                            id="password"
+                                            type="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            placeholder="••••••••"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mt-4"
+                                >
+                                    {authForm === 'login' ? 'Sign In' : 'Sign Up'}
+                                </button>
+                            </form>
+
+                            <div className="mt-6 text-center text-sm text-gray-500">
+                                {authForm === 'login'
+                                    ? "Don't have an account? "
+                                    : "Already have an account? "}
+                                <button
+                                    onClick={() => setAuthForm(authForm === 'login' ? 'register' : 'login')}
+                                    className="font-medium text-blue-600 hover:text-blue-800 underline"
+                                >
+                                    {authForm === 'login' ? 'Sign up' : 'Sign in'}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="animate-fadeIn">
+                            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6 transition-all duration-300">
+                                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4">
+                                    <h2 className="text-white text-lg font-semibold flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clipRule="evenodd" />
+                                        </svg>
+                                        Your Tasks Assistant
+                                    </h2>
+                                </div>
+
+                                <div className="p-4 h-[60vh] overflow-y-auto">
+                                    {messages.length === 0 ? (
+                                        <div className="h-full flex flex-col items-center justify-center text-center p-4 text-gray-500">
+                                            <div className="mb-6 transform transition-transform duration-500 hover:scale-110">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-blue-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                                </svg>
+                                            </div>
+                                            <h3 className="text-xl font-semibold text-gray-700 mb-2">Welcome to Todo AI!</h3>
+                                            <p className="mb-4 max-w-md">I'm your AI assistant for managing tasks. How can I help you today?</p>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-lg">
+                                                {[
+                                                    "Add a task to buy groceries",
+                                                    "Show me all my tasks",
+                                                    "What's pending?",
+                                                    "Mark task 3 as complete"
+                                                ].map((suggestion, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-3 text-sm cursor-pointer transition-all duration-200 hover:shadow-sm"
+                                                        onClick={() => setInputValue(suggestion)}
+                                                    >
+                                                        <span className="text-blue-700">{suggestion}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            {messages.map((message) => (
+                                                <div
+                                                    key={message.id}
+                                                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} fade-in`}
+                                                >
+                                                    <div
+                                                        className={`max-w-[85%] rounded-2xl p-4 shadow-sm ${
+                                                            message.role === 'user'
+                                                                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-none'
+                                                                : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-start">
+                                                            {message.role !== 'user' && (
+                                                                <div className="mr-3 flex-shrink-0">
+                                                                    <div className="bg-gradient-to-r from-purple-500 to-indigo-600 w-8 h-8 rounded-full flex items-center justify-center">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                                                            <path fillRule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clipRule="evenodd" />
+                                                                        </svg>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            <div className="break-words whitespace-pre-line">
+                                                                {message.content}
+                                                            </div>
+                                                            {message.role === 'user' && (
+                                                                <div className="ml-3 flex-shrink-0">
+                                                                    <div className="bg-gradient-to-r from-blue-400 to-blue-500 w-8 h-8 rounded-full flex items-center justify-center">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                                                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                                                        </svg>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <div ref={messagesEndRef} />
+                                            {isLoading && (
+                                                <div className="flex justify-start fade-in">
+                                                    <div className="bg-gray-100 text-gray-800 rounded-2xl p-4 max-w-[85%] rounded-bl-none">
+                                                        <div className="flex items-center">
+                                                            <div className="mr-3 flex-shrink-0">
+                                                                <div className="bg-gradient-to-r from-purple-500 to-indigo-600 w-8 h-8 rounded-full flex items-center justify-center">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                                                        <path fillRule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clipRule="evenodd" />
+                                                                    </svg>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex space-x-2">
+                                                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce"></div>
+                                                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce delay-100"></div>
+                                                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce delay-200"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="flex gap-3 animate-fadeIn">
+                                <div className="relative flex-grow">
+                                    <input
+                                        type="text"
+                                        value={inputValue}
+                                        onChange={(e) => setInputValue(e.target.value)}
+                                        placeholder="Type your message here..."
+                                        className="w-full pl-4 pr-12 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
+                                        disabled={isLoading}
+                                    />
+                                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={isLoading || !inputValue.trim()}
+                                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

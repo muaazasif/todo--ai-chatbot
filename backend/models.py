@@ -26,7 +26,7 @@ from auth import User
 
 class Task(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int  # Changed to integer to match User.id
+    user_id: int  # Integer to match User.id
     title: str
     description: Optional[str] = None
     completed: bool = False
@@ -36,14 +36,14 @@ class Task(SQLModel, table=True):
 
 class Conversation(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int  # Changed to integer to match User.id
+    user_id: int  # Integer to match User.id
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class Message(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int  # Changed to integer to match User.id
+    user_id: int  # Integer to match User.id
     conversation_id: int
     role: str  # "user" or "assistant"
     content: str

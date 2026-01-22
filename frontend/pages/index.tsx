@@ -39,7 +39,11 @@ export default function Home() {
     setError('');
 
     try {
-      const response = await fetch(`https://todo-ai-chatbot-production.up.railway.app/auth/${authForm}`, {
+      const apiUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+        ? 'https://todo-ai-chatbot-production.up.railway.app'
+        : '';
+
+      const response = await fetch(`${apiUrl}/auth/${authForm}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,8 +96,12 @@ export default function Home() {
     setIsLoading(true);
 
     try {
+      const apiUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+        ? 'https://todo-ai-chatbot-production.up.railway.app'
+        : '';
+
       // First attempt with existing conversation ID
-      let response = await fetch(`https://todo-ai-chatbot-production.up.railway.app/api/chat`, {
+      let response = await fetch(`${apiUrl}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -111,7 +119,7 @@ export default function Home() {
         setConversationId(null); // Reset conversation ID
 
         // Retry with null conversation ID
-        response = await fetch(`https://todo-ai-chatbot-production.up.railway.app/api/chat`, {
+        response = await fetch(`${apiUrl}/api/chat`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -155,7 +163,7 @@ export default function Home() {
         setTimeout(async () => {
           try {
             // Use a fresh conversation ID to ensure we get the latest state
-            const refreshResponse = await fetch(`https://todo-ai-chatbot-production.up.railway.app/api/chat`, {
+            const refreshResponse = await fetch(`${apiUrl}/api/chat`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
