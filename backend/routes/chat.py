@@ -68,7 +68,7 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
             })
 
     # Run agent with MCP tools
-    result = await run_agent(user_id, agent_messages)  # Pass user_id as integer
+    result = await run_agent(str(user_id), agent_messages)  # Pass user_id as string to match DB schema
 
     # Store assistant response
     with Session(engine) as session:

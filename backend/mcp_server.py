@@ -27,28 +27,28 @@ class ToolResult(BaseModel):
 
 
 class AddTaskParams(BaseModel):
-    user_id: int  # Changed to int to match the actual user_id type
+    user_id: str  # Changed back to str to match DB column type
     title: str
     description: str = None
 
 
 class ListTasksParams(BaseModel):
-    user_id: int  # Changed to int to match the actual user_id type
+    user_id: str  # Changed back to str to match DB column type
     status: str = "all"  # "all", "pending", "completed"
 
 
 class CompleteTaskParams(BaseModel):
-    user_id: int  # Changed to int to match the actual user_id type
+    user_id: str  # Changed back to str to match DB column type
     task_id: int
 
 
 class DeleteTaskParams(BaseModel):
-    user_id: int  # Changed to int to match the actual user_id type
+    user_id: str  # Changed back to str to match DB column type
     task_id: int
 
 
 class UpdateTaskParams(BaseModel):
-    user_id: int  # Changed to int to match the actual user_id type
+    user_id: str  # Changed back to str to match DB column type
     task_id: int
     title: str = None
     description: str = None
@@ -69,8 +69,10 @@ class MCPServer:
         """Create a new task"""
         try:
             with Session(engine) as session:
+                # Convert integer user_id to string for storage in DB column
+                user_id_str = str(params.user_id)
                 task = Task(
-                    user_id=params.user_id,
+                    user_id=user_id_str,  # Store as string to match DB schema
                     title=params.title,
                     description=params.description,
                     completed=False
@@ -92,7 +94,9 @@ class MCPServer:
         """Retrieve tasks from the list"""
         try:
             with Session(engine) as session:
-                statement = select(Task).where(Task.user_id == params.user_id)
+                # Convert integer user_id to string for comparison with DB column
+                user_id_str = str(params.user_id)
+                statement = select(Task).where(Task.user_id == user_id_str)
 
                 if params.status == "pending":
                     statement = statement.where(Task.completed == False)
@@ -117,9 +121,12 @@ class MCPServer:
         """Mark a task as complete"""
         try:
             with Session(engine) as session:
+                # Convert integer user_id to string for comparison with DB column
+                user_id_str = str(params.user_id)
+
                 task = session.get(Task, params.task_id)
 
-                if not task or task.user_id != params.user_id:
+                if not task or str(task.user_id) != user_id_str:
                     return {"error": f"Task {params.task_id} not found for user {params.user_id}"}
 
                 task.completed = True
@@ -140,9 +147,12 @@ class MCPServer:
         """Remove a task from the list"""
         try:
             with Session(engine) as session:
+                # Convert integer user_id to string for comparison with DB column
+                user_id_str = str(params.user_id)
+
                 task = session.get(Task, params.task_id)
 
-                if not task or task.user_id != params.user_id:
+                if not task or str(task.user_id) != user_id_str:
                     return {"error": f"Task {params.task_id} not found for user {params.user_id}"}
 
                 session.delete(task)
@@ -161,9 +171,12 @@ class MCPServer:
         """Modify task title or description"""
         try:
             with Session(engine) as session:
+                # Convert integer user_id to string for comparison with DB column
+                user_id_str = str(params.user_id)
+
                 task = session.get(Task, params.task_id)
 
-                if not task or task.user_id != params.user_id:
+                if not task or str(task.user_id) != user_id_str:
                     return {"error": f"Task {params.task_id} not found for user {params.user_id}"}
 
                 if params.title is not None:

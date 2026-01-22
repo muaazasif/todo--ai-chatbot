@@ -51,7 +51,7 @@ async def send_mcp_request(method: str, params: dict) -> dict:
         return {"error": repr(e)}
 
 
-async def run_agent(user_id: int, messages: list):
+async def run_agent(user_id: str, messages: list):
     """
     Run the agent with MCP tools to process user messages
     """
