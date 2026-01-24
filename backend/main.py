@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
 import os
+import logging
 from typing import Optional
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, create_engine, Session, select
@@ -49,9 +50,6 @@ app.add_middleware(
 app.include_router(auth_routes_router)  # Include the new authentication routes
 app.include_router(chat_router, prefix="/api")
 app.include_router(auth_router, prefix="/auth")
-
-import os
-import logging
 
 # Serve frontend files
 frontend_dir = "/app/frontend/out"  # Absolute path in Docker container
@@ -106,6 +104,9 @@ else:
 def health_check():
     return {"status": "healthy"}
 
+# This is the important part - make sure the app runs on the correct port
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    logging.info(f"Starting server on port {port}")
+    uvicorn.run(app, host="0.0.0.0", port=port)
