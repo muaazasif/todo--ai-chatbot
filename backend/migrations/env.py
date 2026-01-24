@@ -1,15 +1,16 @@
 import sys
 import os
-# Add the app directory to the Python path so we can import from backend
-sys.path.insert(0, '/app')
+
+# Add the parent directory (where models.py is located) to the Python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
-# Import all models from backend.models
-from backend.models import *
+# Import all models - since we're in the backend directory after path manipulation
+from models import *
 from sqlmodel import SQLModel
 
 # this is the Alembic Config object, which provides
