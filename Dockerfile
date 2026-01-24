@@ -28,20 +28,20 @@ RUN apt-get update && apt-get install -y \
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy setup.py to the app directory
-COPY setup.py .
-
 # Copy backend source code
 COPY backend/ .
+
+# Copy setup.py to the app directory
+COPY setup.py .
 
 # Copy built frontend from the previous stage
 COPY --from=frontend-builder /app/out ./frontend/out
 
-# Set the working directory to /app
-WORKDIR /app
-
 # Install the backend as a package
 RUN pip install -e .
 
+# Set the working directory to /app/backend where main.py is located
+WORKDIR /app/backend
+
 # Run the application - the port will be set by Railway
-CMD ["sh", "-c", "alembic upgrade head && exec python -c \"import os; import sys; import uvicorn; from backend.main import app; port=int(os.environ.get('PORT', 8000)); print(f'Using port: {port}'); uvicorn.run(app, host='0.0.0.0', port=port)\""]
+CMD ["sh", "-c", "alembic upgrade head && exec python -c \"import os; import sys; import uvicorn; from main import app; port=int(os.environ.get('PORT', 8000)); print(f'Using port: {port}'); uvicorn.run(app, host='0.0.0.0', port=port)\""]
