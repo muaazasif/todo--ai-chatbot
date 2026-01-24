@@ -22,7 +22,12 @@ else:
 
 
 # Import User model from auth module
-from .auth import User
+try:
+    # Try relative import first (for normal application use)
+    from .auth import User
+except ImportError:
+    # Fall back to absolute import (for alembic migrations)
+    from auth import User
 
 
 class Task(SQLModel, table=True):
