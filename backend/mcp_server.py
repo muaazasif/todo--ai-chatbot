@@ -13,7 +13,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, WebSocket
 from sqlmodel import Session, select
-from .models import Task, engine
+from models import Task, engine
 from pydantic import BaseModel
 from datetime import datetime
 

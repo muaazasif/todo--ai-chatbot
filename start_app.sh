@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# Set the Python path
-export PYTHONPATH="/app:$PYTHONPATH"
+# Set database URL to SQLite for local development/testing
+export DATABASE_URL="sqlite:///./todo_chatbot.db"
+
+# Change to the backend directory where alembic.ini is located for migrations
+cd "/home/muaaz/Desktop/Governor Sindh IT/todo-ai-chatbot/backend"
 
 # Run the migrations
 alembic upgrade head
 
-# Run the test server to verify basic setup works
-exec python test_server.py
+# Start the main application
+exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
