@@ -3,8 +3,8 @@
 import os
 import sys
 
-# Add the backend directory to the Python path
-sys.path.insert(0, '/app/backend')
+# Add the app directory to the Python path so we can import backend
+sys.path.insert(0, '/app')
 
 # Import and run the application
 import uvicorn
