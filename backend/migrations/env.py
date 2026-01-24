@@ -4,9 +4,11 @@ from sqlalchemy import pool
 from alembic import context
 import sys
 import os
+# Add the parent directory to the path so we can import from backend
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from models import *
+# Import all models from backend.models
+from backend.models import *
 from sqlmodel import SQLModel
 
 # this is the Alembic Config object, which provides
