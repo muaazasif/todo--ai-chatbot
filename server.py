@@ -1,5 +1,10 @@
 import os
+import sys
 import uvicorn
+
+# Add the app directory to the Python path so we can import from backend
+sys.path.insert(0, '/app')
+
 from backend.main import app
 
 if __name__ == "__main__":
