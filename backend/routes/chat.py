@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
 from pydantic import BaseModel
 from sqlmodel import Session, select
-from models import Message, Conversation, Task, engine, User
+from ..models import Message, Conversation, Task, engine, User
 from datetime import datetime
 from typing import Optional, List
 import uuid
-from agents import run_agent
-from routes.auth_routes import get_current_user
+from ..agents import run_agent
+from .auth_routes import get_current_user
 
 router = APIRouter()
 

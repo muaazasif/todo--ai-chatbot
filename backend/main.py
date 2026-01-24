@@ -16,12 +16,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import models
-from models import Task, Conversation, Message, engine, User
+from backend.models import Task, Conversation, Message, engine, User
 
 # Import routes
-from routes.chat import router as chat_router
-from routes.auth import router as auth_router
-from routes.auth_routes import router as auth_routes_router, get_current_user
+from .routes.chat import router as chat_router
+from .routes.auth import router as auth_router
+from .routes.auth_routes import router as auth_routes_router, get_current_user
 
 # Initialize the FastAPI app
 @asynccontextmanager

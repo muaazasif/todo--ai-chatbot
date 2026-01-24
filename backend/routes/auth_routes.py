@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlmodel import Session, select
-from auth import UserCreate, UserLogin, Token, create_access_token, verify_password, get_password_hash
-from models import User, engine
+from ..auth import UserCreate, UserLogin, Token, create_access_token, verify_password, get_password_hash
+from ..models import User, engine
 from typing import Optional
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from auth import verify_token, TokenData
+from ..auth import verify_token, TokenData
 from datetime import timedelta
 
 router = APIRouter(prefix="/auth", tags=["auth"])

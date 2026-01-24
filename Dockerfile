@@ -35,4 +35,4 @@ COPY backend/ .
 COPY --from=frontend-builder /app/out ./frontend/out
 
 # Run the application - the port will be set by Railway
-CMD ["sh", "-c", "alembic upgrade head && exec uvicorn main:app --host 0.0.0.0 --port $PORT"]
+CMD ["sh", "-c", "alembic upgrade head && exec python server.py"]

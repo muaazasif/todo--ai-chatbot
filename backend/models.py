@@ -22,7 +22,7 @@ else:
 
 
 # Import User model from auth module
-from auth import User
+from .auth import User
 
 
 class Task(SQLModel, table=True):
