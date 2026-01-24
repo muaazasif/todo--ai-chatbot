@@ -2,7 +2,6 @@
 
 import os
 import sys
-import subprocess
 
 # Set environment variable to help with imports
 os.environ['PYTHONPATH'] = '/app'
@@ -12,13 +11,14 @@ port = int(os.environ.get("PORT", 8000))
 print(f"PORT environment variable value: {os.environ.get('PORT')}")
 print(f"Using port: {port}")
 
-# Run uvicorn directly on the main module
-cmd = [
+# Use os.system to run uvicorn which handles imports differently
+import subprocess
+result = subprocess.run([
     "uvicorn",
     "main:app",
     "--host", "0.0.0.0",
     "--port", str(port),
-    "--forwarded-allow-ips", "*"  # In case behind proxy
-]
+    "--reload", "false"  # Disable reload in production
+])
 
-os.execvp("uvicorn", cmd)
+sys.exit(result.returncode)
