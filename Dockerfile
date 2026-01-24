@@ -45,6 +45,8 @@ WORKDIR /app
 
 # Copy the startup script
 COPY start_server.py .
+COPY start_app.sh .
+RUN chmod +x start_app.sh
 
 # Run the application - the port will be set by Railway
-CMD ["sh", "-c", "alembic upgrade head && exec python start_server.py"]
+CMD ["sh", "-c", "alembic upgrade head && exec sh start_app.sh"]
