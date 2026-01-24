@@ -37,5 +37,8 @@ COPY --from=frontend-builder /app/out ./frontend/out
 # Set the working directory to /app
 WORKDIR /app
 
+# Install the backend as a package
+RUN pip install -e .
+
 # Run the application - the port will be set by Railway
-CMD ["sh", "-c", "alembic upgrade head && exec python -c \"import os; import sys; sys.path.insert(0, '.'); import uvicorn; from backend.main import app; port=int(os.environ.get('PORT', 8000)); print(f'Using port: {port}'); uvicorn.run(app, host='0.0.0.0', port=port)\""]
+CMD ["sh", "-c", "alembic upgrade head && exec python -c \"import os; import sys; import uvicorn; from backend.main import app; port=int(os.environ.get('PORT', 8000)); print(f'Using port: {port}'); uvicorn.run(app, host='0.0.0.0', port=port)\""]
