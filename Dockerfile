@@ -38,4 +38,4 @@ COPY server.py ./
 COPY --from=frontend-builder /app/out ./frontend/out
 
 # Run the application - the port will be set by Railway
-CMD ["sh", "-c", "alembic upgrade head && exec python server.py"]
+CMD ["sh", "-c", "cd /app && alembic upgrade head && exec python -c \"import os; import sys; sys.path.insert(0, '/app'); import uvicorn; from backend.main import app; port=int(os.environ.get('PORT', 8000)); print(f'Using port: {port}'); uvicorn.run(app, host='0.0.0.0', port=port)\""]

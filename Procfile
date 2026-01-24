@@ -1,1 +1,1 @@
-web: cd backend && alembic upgrade head && exec python ../server.py
+web: cd /app && alembic upgrade head && exec python -c "import os; import sys; sys.path.insert(0, '/app'); import uvicorn; from backend.main import app; port=int(os.environ.get('PORT', 8000)); print(f'Using port: {port}'); uvicorn.run(app, host='0.0.0.0', port=port)"
