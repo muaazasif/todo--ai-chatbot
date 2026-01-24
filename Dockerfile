@@ -34,6 +34,9 @@ COPY backend/ .
 # Copy setup.py to the app directory
 COPY setup.py .
 
+# Copy the startup script
+COPY start_server.py .
+
 # Copy built frontend from the previous stage
 COPY --from=frontend-builder /app/out ./frontend/out
 
@@ -43,8 +46,5 @@ RUN pip install -e .
 # Set the working directory to /app where alembic.ini is located
 WORKDIR /app
 
-# Set PYTHONPATH to include the backend directory
-ENV PYTHONPATH=/app/backend:$PYTHONPATH
-
 # Run the application - the port will be set by Railway
-CMD ["sh", "-c", "alembic upgrade head && exec python -c \"import os; import sys; import uvicorn; from backend.main import app; port=int(os.environ.get('PORT', 8000)); print(f'Using port: {port}'); uvicorn.run(app, host='0.0.0.0', port=port)\""]
+CMD ["sh", "-c", "alembic upgrade head && exec python start_server.py"]
