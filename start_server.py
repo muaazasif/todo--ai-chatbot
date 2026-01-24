@@ -3,12 +3,15 @@
 import os
 import sys
 
-# Add the app directory to the Python path so we can import backend
-sys.path.insert(0, '/app')
+# Change to the backend directory to run the app from there
+os.chdir('/app/backend')
+
+# Add the current directory to the Python path
+sys.path.insert(0, '/app/backend')
 
 # Import and run the application
 import uvicorn
-from backend.main import app
+from main import app
 
 port = int(os.environ.get("PORT", 8000))
 print(f"PORT environment variable value: {os.environ.get('PORT')}")
