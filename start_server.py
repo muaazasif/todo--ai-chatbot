@@ -3,11 +3,9 @@
 import os
 import sys
 
-# Change to the backend directory to run the app from there
-os.chdir('/app/backend')
-
-# Add the current directory to the Python path
-sys.path.insert(0, '/app/backend')
+# The main.py file is directly in /app since we copied backend/contents to /
+# So we don't need to change directory, just add /app to the path
+sys.path.insert(0, '/app')
 
 # Import and run the application
 import uvicorn
