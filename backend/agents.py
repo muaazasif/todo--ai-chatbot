@@ -8,7 +8,7 @@ request_id_counter = 0
 
 
 # Instead of using WebSocket communication, let's directly import and call the MCP server functions
-from .mcp_server import MCPServer
+from mcp_server import MCPServer
 
 # Create a single instance of the MCP server
 mcp_server_instance = MCPServer()
