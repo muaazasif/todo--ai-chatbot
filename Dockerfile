@@ -43,6 +43,7 @@ WORKDIR /app
 
 # Copy alembic.ini to app root so migrations can run from here
 COPY backend/alembic.ini .
+COPY -r backend/migrations/ ./migrations/
 
 # Copy the startup script
 COPY start_server.py .
