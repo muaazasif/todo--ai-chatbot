@@ -106,7 +106,8 @@ async def run_agent(user_id: str, messages: list):
           ("show" in last_message and "task" in last_message) or
           ("all" in last_message and "pending" in last_message) or
           ("what" in last_message and "pending" in last_message) or
-          ("my" in last_message and "pending" in last_message and "task" in last_message)):
+          ("my" in last_message and "pending" in last_message and "task" in last_message) or
+          ("pending" in last_message and "task" in last_message)):
         # Determine status to filter
         status = "all"
         if "pending" in last_message:
