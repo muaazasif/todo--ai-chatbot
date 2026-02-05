@@ -38,16 +38,16 @@ COPY --from=frontend-builder /app/out ./frontend/out
 # Install the backend as a package
 RUN pip install -e .
 
-# Set working directory to backend where alembic.ini is located
-WORKDIR /app/backend
+# Set working directory to app root
+WORKDIR /app
 
 # Copy the startup script
 COPY start_server.py .
 COPY start_app.sh .
 RUN chmod +x start_app.sh
 
-# Copy the entrypoint script to the app root
-COPY entrypoint.py /app/
+# Copy the entrypoint script
+COPY entrypoint.py .
 
 # Run the application - the port will be set by Railway
-CMD ["python", "/app/entrypoint.py"]
+CMD ["python", "./entrypoint.py"]
