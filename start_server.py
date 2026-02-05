@@ -18,6 +18,7 @@ def run_migrations():
         # Run migrations using Python's alembic module directly
         from alembic.config import Config
         from alembic import command
+        import psycopg2
         
         # Create alembic config, pointing to the alembic.ini file
         # According to Dockerfile, alembic.ini is copied to /app directory
@@ -32,8 +33,14 @@ def run_migrations():
         print("Alembic not available, skipping migrations")
         return True  # Don't fail if alembic isn't available
     except Exception as e:
-        print(f"Error running migrations: {str(e)}")
-        return False
+        # Check if it's a duplicate table error - this can be safely ignored
+        error_str = str(e)
+        if "DuplicateTable" in error_str or "already exists" in error_str.lower():
+            print("Database tables already exist, skipping migration")
+            return True
+        else:
+            print(f"Error running migrations: {str(e)}")
+            return False
 
 def main():
     # Run database migrations first
