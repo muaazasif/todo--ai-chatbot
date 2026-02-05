@@ -12,15 +12,15 @@ def run_migrations():
     """Run alembic migrations from the backend directory"""
     logger.info("Running database migrations...")
     
-    # Run alembic upgrade in the backend directory without changing current directory
-    backend_dir = "/app/backend"
-    
-    # Run alembic upgrade with explicit working directory
-    result = subprocess.run(
-        ["alembic", "upgrade", "head"],
-        cwd=backend_dir,  # This sets the working directory for the subprocess
-        capture_output=True,
-        text=True
+    # Run alembic upgrade in the backend directory using the cwd parameter
+    # This avoids needing to use 'cd' command entirely
+    result = subprocess.run([
+        'alembic', 'upgrade', 'head'
+    ], 
+    cwd='/app/backend',
+    env=os.environ,
+    capture_output=True,
+    text=True
     )
     
     if result.returncode != 0:
