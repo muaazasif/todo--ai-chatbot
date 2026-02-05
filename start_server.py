@@ -52,10 +52,10 @@ def main():
     print("Migrations completed, starting application...")
 
     # Add the backend directory to Python path
-    sys.path.insert(0, '/app/backend')
+    sys.path.insert(0, '/app')
 
     # Set environment variable to help with imports
-    os.environ['PYTHONPATH'] = '/app/backend'
+    os.environ['PYTHONPATH'] = '/app'
 
     # Set default database URL to SQLite for local development/testing
     if 'DATABASE_URL' not in os.environ:
@@ -64,8 +64,8 @@ def main():
     # Import and run the application directly
     import importlib.util
 
-    # Load the main module directly from file in the backend directory
-    spec = importlib.util.spec_from_file_location("main", "/app/backend/main.py")
+    # Load the main module directly from file (main.py is in /app directory after Docker copy)
+    spec = importlib.util.spec_from_file_location("main", "/app/main.py")
     main_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(main_module)
 
