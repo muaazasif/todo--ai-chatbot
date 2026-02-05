@@ -2,8 +2,36 @@
 
 import os
 import sys
+import subprocess
+import logging
+
+def run_migrations():
+    """Run database migrations using alembic"""
+    try:
+        # Change to the app directory and run migrations
+        result = subprocess.run(['alembic', 'upgrade', 'head'], 
+                                cwd='/app',
+                                capture_output=True, 
+                                text=True)
+        if result.returncode != 0:
+            print(f"Alembic migration failed: {result.stderr}")
+            return False
+        else:
+            print("Database migrations completed successfully")
+            return True
+    except Exception as e:
+        print(f"Error running migrations: {str(e)}")
+        return False
 
 def main():
+    # Run database migrations first
+    print("Running database migrations...")
+    if not run_migrations():
+        print("Failed to run migrations, exiting...")
+        sys.exit(1)
+    
+    print("Migrations completed, starting application...")
+
     # Add the backend directory to Python path
     sys.path.insert(0, '/app/backend')
 
