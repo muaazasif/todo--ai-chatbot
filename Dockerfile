@@ -32,14 +32,14 @@ COPY backend/ .
 # Copy setup.py to the app directory
 COPY setup.py .
 
-# Copy built frontend from the previous stage
-COPY --from=frontend-builder /app/out ./frontend/out
-
 # Install the backend as a package
 RUN pip install -e .
 
 # Set working directory to app root
 WORKDIR /app
+
+# Copy built frontend from the previous stage
+COPY --from=frontend-builder /app/out ./frontend/out
 
 # Copy alembic.ini to app root so migrations can run from here
 COPY backend/alembic.ini .
