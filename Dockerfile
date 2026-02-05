@@ -40,7 +40,7 @@ COPY --from=frontend-builder /app/out ./frontend/out
 # Install the backend as a package
 RUN pip install -e .
 
-# Set the working directory to /app where alembic.ini is located
+# Set the working directory to /app
 WORKDIR /app
 
 # Copy the startup script
@@ -49,4 +49,4 @@ COPY start_app.sh .
 RUN chmod +x start_app.sh
 
 # Run the application - the port will be set by Railway
-CMD ["sh", "-c", "alembic upgrade head && exec sh start_app.sh"]
+CMD ["sh", "-c", "/app/start_app.sh"]

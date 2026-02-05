@@ -1,16 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 # Set database URL
 export DATABASE_URL=${DATABASE_URL:-"sqlite:///./todo_chatbot.db"}
 
-# Change to the app directory where alembic.ini is located for migrations
-cd /app
+# Run the migrations from the backend directory
+cd /app/backend && alembic upgrade head
 
-# Run the migrations
-alembic upgrade head
-
-# Change to the backend directory to run the application
-cd /app/backend
-
-# Start the main application
-exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Start the main application using start_server.py
+cd /app && exec python start_server.py
