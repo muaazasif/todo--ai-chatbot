@@ -51,7 +51,7 @@ def main():
     
     print("Migrations completed, starting application...")
 
-    # Add the backend directory to Python path
+    # Add the app directory to Python path so imports work correctly
     sys.path.insert(0, '/app')
 
     # Set environment variable to help with imports
@@ -62,15 +62,8 @@ def main():
         os.environ['DATABASE_URL'] = 'sqlite:///./todo_chatbot.db'
 
     # Import and run the application directly
-    import importlib.util
-
-    # Load the main module directly from file (main.py is in /app directory after Docker copy)
-    spec = importlib.util.spec_from_file_location("main", "/app/main.py")
-    main_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(main_module)
-
-    # Get the app instance
-    app = main_module.app
+    # Since we copied backend/ to /app, main.py and its dependencies are all in /app
+    from main import app
 
     # Get the port from environment
     port = int(os.environ.get("PORT", 8000))
