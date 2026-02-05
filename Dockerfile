@@ -49,4 +49,4 @@ COPY start_app.sh .
 RUN chmod +x start_app.sh
 
 # Run the application - the port will be set by Railway
-CMD ["sh", "-c", "/app/start_app.sh"]
+CMD ["sh", "-c", "cd /app/backend && alembic upgrade head && cd /app && python start_server.py"]
