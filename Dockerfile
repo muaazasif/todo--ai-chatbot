@@ -48,5 +48,8 @@ COPY start_server.py .
 COPY start_app.sh .
 RUN chmod +x start_app.sh
 
+# Copy the entrypoint script
+COPY entrypoint.py .
+
 # Run the application - the port will be set by Railway
-CMD ["sh", "-c", "cd /app/backend && alembic upgrade head && cd /app && python start_server.py"]
+CMD ["python", "/app/entrypoint.py"]
