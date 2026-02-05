@@ -41,6 +41,9 @@ RUN pip install -e .
 # Set working directory to app root
 WORKDIR /app
 
+# Copy alembic.ini to app root so migrations can run from here
+COPY backend/alembic.ini .
+
 # Copy the startup script
 COPY start_server.py .
 COPY start_app.sh .

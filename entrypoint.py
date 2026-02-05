@@ -9,14 +9,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def run_migrations():
-    """Run alembic migrations from the backend directory"""
+    """Run alembic migrations from the current directory (app root)"""
     logger.info("Running database migrations...")
     
-    # Run alembic upgrade in the backend directory using the cwd parameter
+    # Run alembic upgrade from current directory (app root where we copied alembic.ini)
     result = subprocess.run([
         'alembic', 'upgrade', 'head'
     ], 
-    cwd='/app/backend',  # Explicitly set working directory for alembic
     env=os.environ,
     capture_output=True,
     text=True
