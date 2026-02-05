@@ -53,4 +53,4 @@ RUN chmod +x start_app.sh
 COPY entrypoint.py .
 
 # Run the application - the port will be set by Railway
-CMD ["python", "./entrypoint.py"]
+CMD ["python", "start_server.py"]
