@@ -20,7 +20,8 @@ def run_migrations():
         from alembic import command
         
         # Create alembic config, pointing to the alembic.ini file
-        alembic_cfg = Config("/app/backend/alembic.ini")
+        # According to Dockerfile, alembic.ini is copied to /app directory
+        alembic_cfg = Config("/app/alembic.ini")
         
         # Run the upgrade command
         command.upgrade(alembic_cfg, "head")
