@@ -40,7 +40,7 @@ export default function Home() {
 
     try {
       const apiUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-        ? 'https://todo-ai-chatbot-production.up.railway.app'
+        ? ''
         : '';
 
       const response = await fetch(`${apiUrl}/auth/${authForm}`, {
@@ -97,7 +97,7 @@ export default function Home() {
 
     try {
       const apiUrl = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-        ? 'https://todo-ai-chatbot-production.up.railway.app'
+        ? ''
         : '';
 
       // First attempt with existing conversation ID
