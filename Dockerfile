@@ -15,8 +15,6 @@ RUN npm run build
 # Backend stage
 FROM python:3.11-slim
 
-WORKDIR /app
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
@@ -40,16 +38,16 @@ COPY --from=frontend-builder /app/out ./frontend/out
 # Install the backend as a package
 RUN pip install -e .
 
-# Set the working directory to /app
-WORKDIR /app
+# Set working directory to backend where alembic.ini is located
+WORKDIR /app/backend
 
 # Copy the startup script
 COPY start_server.py .
 COPY start_app.sh .
 RUN chmod +x start_app.sh
 
-# Copy the entrypoint script
-COPY entrypoint.py .
+# Copy the entrypoint script to the app root
+COPY entrypoint.py /app/
 
 # Run the application - the port will be set by Railway
 CMD ["python", "/app/entrypoint.py"]

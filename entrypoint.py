@@ -9,15 +9,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def run_migrations():
-    """Run alembic migrations from the backend directory"""
+    """Run alembic migrations from the current directory (backend)"""
     logger.info("Running database migrations...")
     
-    # Run alembic upgrade in the backend directory using the cwd parameter
-    # This avoids needing to use 'cd' command entirely
+    # Run alembic upgrade in the current directory (already in backend)
     result = subprocess.run([
         'alembic', 'upgrade', 'head'
     ], 
-    cwd='/app/backend',
     env=os.environ,
     capture_output=True,
     text=True
